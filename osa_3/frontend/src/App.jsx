@@ -81,9 +81,10 @@ const App = () => {
             setNewName('')
             setNewNumber('')
           })
-          .catch(() => {
+          .catch(error => {
             showMessage(
-              `Information of ${existing.name} has already been removed from server`,
+              error.response?.data?.error ||
+                `Information of ${existing.name} has already been removed from server`,
               'error'
             )
             setPersons(persons.filter(p => p.id !== existing.id))
@@ -93,12 +94,17 @@ const App = () => {
     }
 
     const newPerson = { name: newName, number: newNumber }
-    personService.create(newPerson).then(added => {
-      setPersons(persons.concat(added))
-      showMessage(`Added ${added.name}`)
-      setNewName('')
-      setNewNumber('')
-    })
+    personService
+      .create(newPerson)
+      .then(added => {
+        setPersons(persons.concat(added))
+        showMessage(`Added ${added.name}`)
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        showMessage(error.response?.data?.error || 'Failed to add person', 'error')
+      })
   }
 
   const handleDelete = id => {
