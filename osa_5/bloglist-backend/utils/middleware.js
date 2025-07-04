@@ -29,8 +29,6 @@ const userExtractor = async (request, response, next) => {
         request.user = user
       }
     } catch (error) {
-      // Annetaan virheenkäsittelijän hoitaa tämä
-      // next(error) tai vastaus palautetaan
       next(error)
       return
     }
