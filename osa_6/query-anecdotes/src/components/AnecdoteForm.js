@@ -9,15 +9,15 @@ const AnecdoteForm = () => {
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
     onSuccess: (newAnecdote) => {
-      const anecdotes = queryClient.getQueryData(['anecdotes']) || []
-      queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+      queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
       dispatch({ type: 'SHOW', payload: `anecdote '${newAnecdote.content}' created` })
       setTimeout(() => {
         dispatch({ type: 'HIDE' })
       }, 5000)
     },
     onError: (error) => {
-      dispatch({ type: 'SHOW', payload: `Error: ${error.response.data.error}` })
+      const errorMessage = error.response?.data?.error || 'an error occurred while creating the anecdote'
+      dispatch({ type: 'SHOW', payload: errorMessage })
       setTimeout(() => {
         dispatch({ type: 'HIDE' })
       }, 5000)
